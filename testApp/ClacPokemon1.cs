@@ -9,7 +9,8 @@ namespace testApp
         int power; //わざの威力
         int attack; //こうげき・とくこう
         int defense; //ぼうぎょ・とくぼう
-        int rank; //能力ランク
+        int attackRank; //攻撃側の能力ランク
+        int defenseRank; //防御側の能力ランク
         float compatibility; //タイプ相性による倍率
         float weather; //天候補正
         float metronome; //メトロノーム補正
@@ -33,7 +34,8 @@ namespace testApp
             int power = 10,
             int attack = 10,
             int defense = 10,
-            int rank = 0,
+            int attackRank = 0,
+            int defenseRank = 0,
             float compatibility = 1.0F,
             float weather = 1.0F,
             float metronome = 1.0F,
@@ -57,7 +59,8 @@ namespace testApp
             this.power = power;
             this.attack = attack;
             this.defense = defense;
-            this.rank = rank;
+            this.attackRank = attackRank;
+            this.defenseRank = defenseRank;
             this.compatibility = compatibility;
             this.weather = weather;
             this.metronome = metronome;
@@ -75,6 +78,25 @@ namespace testApp
             this.lifeOrb = lifeOrb;
             this.berry = berry;
             this.mtwice = mtwice;
+
+            if (attackRank < 0)
+            {
+                this.attack = attack * 2 / (2 - attackRank);
+            }
+            else
+            {
+                this.attack = attack * (2 + attackRank) / 2;
+            }
+
+            if (defenseRank < 0)
+            {
+                this.defense = defense * 2 / (2 - defenseRank);
+            }
+            else
+            {
+                this.defense = defense * (2 + defenseRank) / 2;
+            }
+
         }
 
         public int calcDamage()

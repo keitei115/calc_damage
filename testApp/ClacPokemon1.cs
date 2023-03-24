@@ -13,9 +13,9 @@ namespace testApp
         int defenseRank; //防御側の能力ランク
 
         //ダメージにかかわる補正
-        float compatibility; //タイプ相性による倍率
-        float weather; //天候補正
-        float metronome; //メトロノーム補正
+        double compatibility; //タイプ相性による倍率
+        double weather; //天候補正
+        double metronome; //メトロノーム補正
         bool typeMatch; //タイプ一致
         bool critical; //急所
         bool ranged; //範囲・全体技
@@ -85,9 +85,9 @@ namespace testApp
             int defense = 10,
             int attackRank = 0,
             int defenseRank = 0,
-            float compatibility = 1.0F,
-            float weather = 1.0F,
-            float metronome = 1.0F,
+            double compatibility = 1.0,
+            double weather = 1.0,
+            double metronome = 1.0,
             bool typeMatch = false,
             bool critical = false,
             bool ranged = false,
@@ -155,6 +155,15 @@ namespace testApp
             Debug.WriteLine("damage: " + damage);
             return damage;
         }
+
+        //五捨五超入
+        private int OverHalf(double x)
+        {
+            if ((x % 1) > 0.5) return (int)(Math.Floor(x) + 1);
+            else return (int)(Math.Floor(x));
+        }
+
+
     }
 
 }

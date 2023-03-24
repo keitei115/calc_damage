@@ -24,5 +24,11 @@ namespace testApp.Tests
             }
 
         }
+        [TestMethod()]
+        public void calcOverHalfTest() {
+            CalcPokemon calcPokemon = new CalcPokemon();
+            Debug.WriteLine(calcPokemon.OverHalf(2.9));
+            Assert.Fail();
+        }
     }
 }

@@ -78,9 +78,6 @@ namespace testApp
         bool riseField; //エレキフィールド・グラスフィールド
         bool sport; //みずあそび、どろあそび
 
-
-
-
         public CalcPokemon(
             int level = 50,
             int power = 10,
@@ -131,6 +128,7 @@ namespace testApp
             this.berry = berry;
             this.mtwice = mtwice;
 
+            //ランク補正
             if (attackRank >= 0) this.attack = attack * (2 + attackRank) / 2;
             else this.attack = attack * 2 / (2 - attackRank);
 

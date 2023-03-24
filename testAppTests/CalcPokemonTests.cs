@@ -13,17 +13,16 @@ namespace testApp.Tests
     public class CalcPokemonTests
 
     {
-        CalcPokemon calcPokemon = new CalcPokemon(attack: 50);
 
         [TestMethod()]
         public void calcDamageTest()
         {
-   
+            CalcPokemon calcPokemon = new CalcPokemon(attack: 55,attackRank:-6,defenseRank:-3);
             if (calcPokemon.calcDamage() != 90)
             {
                 Assert.Fail();
             }
-            
+
         }
     }
 }

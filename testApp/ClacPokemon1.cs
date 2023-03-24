@@ -11,6 +11,8 @@ namespace testApp
         int defense; //ぼうぎょ・とくぼう
         int attackRank; //攻撃側の能力ランク
         int defenseRank; //防御側の能力ランク
+
+        //ダメージにかかわる補正
         float compatibility; //タイプ相性による倍率
         float weather; //天候補正
         float metronome; //メトロノーム補正
@@ -28,6 +30,56 @@ namespace testApp
         bool lifeOrb; //いのちのたま
         bool berry; //半減実
         bool mtwice; //穴を掘る→地震、ダイビング→波乗り、小さくなる→踏みつけの2倍
+
+        //ステータスを上下させるアイテム
+        bool choice; //こだわりハチマキ・こだわりメガネ
+        bool deepSeaTooth; //しんかいのキバ
+        bool deepSeaScale; //しんかいのウロコ
+        bool lightBallThickClub; //でんきだま・ふといホネ
+        bool defeatist; //よわき
+        bool thickFat; //あついしぼう
+        bool eviolite; //しんかのきせき・とつげきチョッキ
+        bool metalPowder; //メタルパウダー
+        bool sandstorm; //すなあらし
+
+        //ステータスを上下させる特性
+        bool statusAttackOnePointFive; //しんりょく・もうか・げきりゅう・むしのしらせ・はりきり・もらいび・サンパワー
+        bool plusMinus; //プラス・マイナス
+        bool guts; //こんじょう(やけどを無視する)
+        bool statusTwice; //ちからもち・ヨガパワー
+        bool statusDefenceOnePointFive; //くさのけがわ・ふしぎなうろこ
+        bool flowerGift; //フラワーギフト
+
+        //技の威力を上下させる特性
+        bool attackZeroPointSevenFive; //とうそうしん(異性)
+        bool auraBreaker; //オーラブレイク
+        bool attackOnePointTwo; //すてみ・てつのこぶし
+        bool attackOnePointTwoFive; //とうそうしん(同性)
+        bool attackOnePointThree; //アナライズ・かたいツメ・スキン・すなのちから・ちからずく
+        bool aura; //フェアリーオーラ・ダークオーラ
+        bool attackOnePointFive; //がんじょうあご・テクニシャン・どくぼうそう・ねつぼうそう・メガランチャー
+        bool defenseHalf; //たいねつ
+        bool defenseOnePointTwoFive; //かんそうはだ
+
+        //技の威力を上げるアイテム
+        bool bandGlasses; //ちからのハチマキ・ものしりメガネ
+        bool plate; //タイプ強化アイテム
+        bool jewel; //ジュエル
+
+        //その他威力を上げるシステム
+        bool powerHalf; //雨下ソーラービーム
+        bool powerOnePointFive; //持ち物を持ってるポケモンにはたきおとす
+        bool helpingHandFirst; //てだすけ1匹目
+        bool helpingHandSecond; //てだすけ2匹目
+        bool meFirst; //さきどり
+        bool charge; //じゅうでん
+        bool powerTwice; //かたきうち・からげんき・クロスサンダー・クロスフレイム・しおみず・ベノムショック
+        bool descentField; //グラスフィールド下でのじしん・じならし・マグニチュード、ミストフィールド下でのドラゴン技
+        bool riseField; //エレキフィールド・グラスフィールド
+        bool sport; //みずあそび、どろあそび
+
+
+
 
         public CalcPokemon(
             int level = 50,
@@ -79,23 +131,11 @@ namespace testApp
             this.berry = berry;
             this.mtwice = mtwice;
 
-            if (attackRank < 0)
-            {
-                this.attack = attack * 2 / (2 - attackRank);
-            }
-            else
-            {
-                this.attack = attack * (2 + attackRank) / 2;
-            }
+            if (attackRank >= 0) this.attack = attack * (2 + attackRank) / 2;
+            else this.attack = attack * 2 / (2 - attackRank);
 
-            if (defenseRank < 0)
-            {
-                this.defense = defense * 2 / (2 - defenseRank);
-            }
-            else
-            {
-                this.defense = defense * (2 + defenseRank) / 2;
-            }
+            if (defenseRank >= 0) this.defense = defense * (2 + defenseRank) / 2;
+            else this.defense = defense * 2 / (2 - defenseRank);
 
         }
 

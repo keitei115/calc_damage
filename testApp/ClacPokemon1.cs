@@ -68,7 +68,7 @@ namespace testApp
         bool plate; //タイプ強化アイテム
         bool jewel; //ジュエル
 
-        //その他威力を上げるシステム
+        //その他威力を上下させるシステム
         bool powerHalf; //雨下ソーラービーム
         bool powerOnePointFive; //持ち物を持ってるポケモンにはたきおとす
         bool helpingHandFirst; //てだすけ1匹目
@@ -82,6 +82,7 @@ namespace testApp
 
         //その他
         bool doubleBattle; //ダブルバトルの場合
+        bool adaptability; //てきおうりょく
 
         public CalcPokemon(
             int level = 50,
@@ -264,6 +265,31 @@ namespace testApp
         {
             int basePower = power;
 
+            int powerCorrectionValue = 4096;
+
+            if (attackZeroPointSevenFive) powerCorrectionValue = CorrectionValueCalculation(3072, powerCorrectionValue);
+            if (auraBreaker) powerCorrectionValue = CorrectionValueCalculation(3072, powerCorrectionValue);
+            if (attackOnePointTwo) powerCorrectionValue = CorrectionValueCalculation(4915, powerCorrectionValue);
+            if (attackOnePointTwoFive) powerCorrectionValue = CorrectionValueCalculation(5120, powerCorrectionValue);
+            if (attackOnePointThree) powerCorrectionValue = CorrectionValueCalculation(5325, powerCorrectionValue);
+            if (aura) powerCorrectionValue = CorrectionValueCalculation(5448, powerCorrectionValue);
+            if (attackOnePointFive) powerCorrectionValue = CorrectionValueCalculation(6144, powerCorrectionValue);
+            if (defenseHalf) powerCorrectionValue = CorrectionValueCalculation(2048, powerCorrectionValue);
+            if (bandGlasses) powerCorrectionValue = CorrectionValueCalculation(4505, powerCorrectionValue);
+            if (plate) powerCorrectionValue = CorrectionValueCalculation(4915, powerCorrectionValue);
+            if (jewel) powerCorrectionValue = CorrectionValueCalculation(5325, powerCorrectionValue);
+            if (powerHalf) powerCorrectionValue = CorrectionValueCalculation(2048, powerCorrectionValue);
+            if (powerOnePointFive) powerCorrectionValue = CorrectionValueCalculation(6144, powerCorrectionValue);
+            if (helpingHandFirst) powerCorrectionValue = CorrectionValueCalculation(6144, powerCorrectionValue);
+            if (meFirst) powerCorrectionValue = CorrectionValueCalculation(6144, powerCorrectionValue);
+            if (charge) powerCorrectionValue = CorrectionValueCalculation(8192, powerCorrectionValue);
+            if (powerTwice) powerCorrectionValue = CorrectionValueCalculation(8192, powerCorrectionValue);
+            if (descentField) powerCorrectionValue = CorrectionValueCalculation(2048, powerCorrectionValue);
+            if (riseField) powerCorrectionValue = CorrectionValueCalculation(6144, powerCorrectionValue);
+            if (sport) powerCorrectionValue = CorrectionValueCalculation(1352, powerCorrectionValue);
+
+            basePower = OverHalf(basePower * powerCorrectionValue / 4096.0);
+
             return basePower;
         }
 
@@ -285,6 +311,11 @@ namespace testApp
             Debug.WriteLine("baseDamage: " + baseDamage);
             Debug.WriteLine("damage: " + damage);
             return damage;
+        }
+
+        public void test()
+        {
+            
         }
 
         //五捨五超入

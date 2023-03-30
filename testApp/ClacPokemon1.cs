@@ -18,6 +18,7 @@ namespace testApp
         bool weatherWeak; //天候補正(弱体化)
         int metronome; //メトロノーム補正
         bool typeMatch; //タイプ一致
+        bool adaptability; //てきおうりょく
         bool critical; //急所
         bool ranged; //範囲・全体技
         bool burn; //やけど
@@ -82,7 +83,6 @@ namespace testApp
 
         //その他
         bool doubleBattle; //ダブルバトルの場合
-        bool adaptability; //てきおうりょく
 
         public CalcPokemon(
             int level = 50,
@@ -96,6 +96,7 @@ namespace testApp
             bool weatherWeak = false,
             int metronome = 1,
             bool typeMatch = false,
+            bool adaptability = false,
             bool critical = false,
             bool ranged = false,
             bool burn = false,
@@ -146,6 +147,7 @@ namespace testApp
             bool riseField = false,
             bool sport = false,
             bool doubleBattle = false
+
             )
         {
             this.level = level;
@@ -209,12 +211,15 @@ namespace testApp
             this.riseField = riseField;
             this.sport = sport;
             this.doubleBattle = doubleBattle;
+            this.adaptability = adaptability;
+            ;
         }
 
-        private int[] calcStatus()
+        private (int baseAttack, int baseDefense) calcStatus()
         {
             int baseAttack = attack;
             int baseDefense = defense;
+
             //ランク補正
             if (attackRank >= 0) baseAttack = baseAttack * (2 + attackRank) / 2;
             else baseAttack = baseAttack * 2 / (2 - attackRank);
@@ -241,7 +246,7 @@ namespace testApp
 
 
             //すなあらし+いわタイプによる特防上昇
-            if (hustle) baseDefense = baseDefense * 6144 / 4096;
+            if (sandstorm) baseDefense = baseDefense * 6144 / 4096;
 
             //防御ステータスの補正
             int statusDefenseCorrectionValue = 4096;
@@ -257,8 +262,7 @@ namespace testApp
             if (baseAttack < 1) baseAttack = 1;
             if (baseDefense < 1) baseDefense = 1;
 
-            int[] result = { baseAttack, baseDefense };
-            return result;
+            return (baseAttack, baseDefense);
         }
 
         private int calcPower()
@@ -275,12 +279,14 @@ namespace testApp
             if (aura) powerCorrectionValue = CorrectionValueCalculation(5448, powerCorrectionValue);
             if (attackOnePointFive) powerCorrectionValue = CorrectionValueCalculation(6144, powerCorrectionValue);
             if (defenseHalf) powerCorrectionValue = CorrectionValueCalculation(2048, powerCorrectionValue);
+            if (defenseOnePointTwoFive) powerCorrectionValue = CorrectionValueCalculation(5120, powerCorrectionValue);
             if (bandGlasses) powerCorrectionValue = CorrectionValueCalculation(4505, powerCorrectionValue);
             if (plate) powerCorrectionValue = CorrectionValueCalculation(4915, powerCorrectionValue);
             if (jewel) powerCorrectionValue = CorrectionValueCalculation(5325, powerCorrectionValue);
             if (powerHalf) powerCorrectionValue = CorrectionValueCalculation(2048, powerCorrectionValue);
             if (powerOnePointFive) powerCorrectionValue = CorrectionValueCalculation(6144, powerCorrectionValue);
             if (helpingHandFirst) powerCorrectionValue = CorrectionValueCalculation(6144, powerCorrectionValue);
+            if (helpingHandSecond) powerCorrectionValue = CorrectionValueCalculation(6144, powerCorrectionValue);
             if (meFirst) powerCorrectionValue = CorrectionValueCalculation(6144, powerCorrectionValue);
             if (charge) powerCorrectionValue = CorrectionValueCalculation(8192, powerCorrectionValue);
             if (powerTwice) powerCorrectionValue = CorrectionValueCalculation(8192, powerCorrectionValue);
@@ -289,6 +295,8 @@ namespace testApp
             if (sport) powerCorrectionValue = CorrectionValueCalculation(1352, powerCorrectionValue);
 
             basePower = OverHalf(basePower * powerCorrectionValue / 4096.0);
+
+            if (basePower < 1) basePower = 1;
 
             return basePower;
         }
@@ -313,9 +321,17 @@ namespace testApp
             return damage;
         }
 
-        public void test()
+        public void testCalc()
         {
-            
+            (int baseAttack, int baseDefense) = calcStatus();
+            Debug.WriteLine("attack: " + baseAttack);
+            Debug.WriteLine("defence: " + baseDefense);
+        }
+
+        public void testPow()
+        {
+            int BasePower = calcPower();
+            Debug.WriteLine("power: " + BasePower);
         }
 
         //五捨五超入

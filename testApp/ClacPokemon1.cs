@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace testApp
 {
@@ -13,8 +14,8 @@ namespace testApp
         int defenseRank; //防御側の能力ランク
 
         //ダメージにかかわる補正
-        double compatibility; //タイプ相性による倍率
-        bool weatherReinforce; //天候補正(弱体化)
+        int compatibility; //タイプ相性による倍率
+        bool weatherReinforce; //天候補正(強化)
         bool weatherWeak; //天候補正(弱体化)
         int metronome; //メトロノーム補正
         bool typeMatch; //タイプ一致
@@ -91,7 +92,7 @@ namespace testApp
             int defense = 10,
             int attackRank = 0,
             int defenseRank = 0,
-            double compatibility = 1.0,
+            int compatibility = 4, //通常時に4とする
             bool weatherReinforce = false,
             bool weatherWeak = false,
             int metronome = 1,
@@ -301,14 +302,53 @@ namespace testApp
             return basePower;
         }
 
-        public int calcDamage()
+        private int calcDamageCorrectionValue()
         {
+            int damageCorrectionValuer = 4096;
+            if (reflect && doubleBattle) damageCorrectionValuer = CorrectionValueCalculation(2732, damageCorrectionValuer);
+            else if (reflect && !doubleBattle) damageCorrectionValuer = CorrectionValueCalculation(2048, damageCorrectionValuer);
+            if (sniper && critical) damageCorrectionValuer = CorrectionValueCalculation(6144, damageCorrectionValuer);
+            if (tintedLens) damageCorrectionValuer = CorrectionValueCalculation(8192, damageCorrectionValuer);
+            if (mhalf) damageCorrectionValuer = CorrectionValueCalculation(2048, damageCorrectionValuer);
+            if (friendGuard) damageCorrectionValuer = CorrectionValueCalculation(3072, damageCorrectionValuer);
+            if (mfilter) damageCorrectionValuer = CorrectionValueCalculation(3072, damageCorrectionValuer);
+            if (metronome == 2) damageCorrectionValuer = CorrectionValueCalculation(4915, damageCorrectionValuer);
+            else if (metronome == 3) damageCorrectionValuer = CorrectionValueCalculation(5734, damageCorrectionValuer);
+            else if (metronome == 4) damageCorrectionValuer = CorrectionValueCalculation(6553, damageCorrectionValuer);
+            else if (metronome == 5) damageCorrectionValuer = CorrectionValueCalculation(7372, damageCorrectionValuer);
+            else if (metronome == 6) damageCorrectionValuer = CorrectionValueCalculation(8192, damageCorrectionValuer);
+            if (expertBelt) damageCorrectionValuer = CorrectionValueCalculation(4915, damageCorrectionValuer);
+            if (lifeOrb) damageCorrectionValuer = CorrectionValueCalculation(5324, damageCorrectionValuer);
+            if (berry) damageCorrectionValuer = CorrectionValueCalculation(2048, damageCorrectionValuer);
+            if (mtwice) damageCorrectionValuer = CorrectionValueCalculation(8192, damageCorrectionValuer);
+            return damageCorrectionValuer;
+        }
 
+        public int[] calcDamage()
+        {
+            (int calculatedAttack, int calculatedDefense) = calcStatus();
+            int calculatedPower = calcPower();
+            int calculatedDamageCorrectionValue = calcDamageCorrectionValue();
+            int[] RandomCorrection = { 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100 };
             int baseLevel, status, baseDamage, damage;
+            int[] randamDamage = new int[16];
             baseLevel = level * 2 / 5 + 2;
-            status = baseLevel * power * attack / defense;
+            status = baseLevel * calculatedPower * calculatedAttack / calculatedDefense;
             baseDamage = status / 50 + 2;
             damage = baseDamage;
+            if (ranged && doubleBattle) damage = OverHalf(damage * 3072 / 4096);
+            if (weatherWeak) damage = OverHalf(damage * 2048 / 4096);
+            if (weatherReinforce) damage = OverHalf(damage * 6144 / 4096);
+            if (critical) damage = OverHalf(damage * 6144 / 4096);
+            randamDamage = RandomCorrection.Select(e => (e * damage / 100)).ToArray();
+            if (typeMatch && adaptability) randamDamage = randamDamage.Select(e => OverHalf(e * 8192 / 4096)).ToArray();
+            else if (typeMatch && !adaptability) randamDamage = randamDamage.Select(e => OverHalf(e * 6144 / 4096)).ToArray();
+            randamDamage = randamDamage.Select(e => (int)(e * ((double)compatibility / 4.0))).ToArray();
+
+            Debug.WriteLine((double)compatibility / 4.0);
+            Debug.WriteLine(randamDamage[15]);
+            if (burn) randamDamage = randamDamage.Select(e => OverHalf(e * 2048 / 4096)).ToArray();
+            randamDamage = randamDamage.Select(e => OverHalf(e * calculatedDamageCorrectionValue / 4096)).ToArray();
 
             Debug.WriteLine("level: " + level);
             Debug.WriteLine("power: " + power);
@@ -317,8 +357,8 @@ namespace testApp
             Debug.WriteLine("baseLevel: " + baseLevel);
             Debug.WriteLine("status: " + status);
             Debug.WriteLine("baseDamage: " + baseDamage);
-            Debug.WriteLine("damage: " + damage);
-            return damage;
+            Debug.WriteLine("damage: " + randamDamage[15]);
+            return randamDamage;
         }
 
         public void testCalc()
@@ -332,6 +372,11 @@ namespace testApp
         {
             int BasePower = calcPower();
             Debug.WriteLine("power: " + BasePower);
+        }
+        public void testDamage()
+        {
+            int BaseDamage = calcDamageCorrectionValue();
+            Debug.WriteLine("power: " + BaseDamage);
         }
 
         //五捨五超入
